@@ -498,32 +498,259 @@ Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
 Remove a student by name
 =================================
 =================================
-
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.deletOne({name: "Toph Beifong"})
+TypeError: db.students.deletOne is not a function
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.deleteOne({name: "Toph Beifong"})
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8385bf35a4e5209377"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: 17,
+    birthday: { month: 12, day: 17, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ]
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ]
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ]
+  }
+]
 
 =================================
 =================================
 Remove a student whos luck_number is greater than 5 (just one student)  
 =================================
 =================================
-
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.deleteOne({lucky_number: {$gt: 5}})
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ]
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ]
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ]
+  }
+]
 
 =================================
 =================================
 add a field to each student collection called "number_of_belts" and set it to the number 0
 =================================
 =================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateMany({}, {$set: { number_of_belts: 0 }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 4,
+  modifiedCount: 4,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ],
+    number_of_belts: 0
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ],
+    number_of_belts: 0
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ],
+    number_of_belts: 0
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ],
+    number_of_belts: 0
+  }
+]
 
 =================================
 =================================
 increment the field "number_of_belts" by 1 for all students who's "home_state" is "WA" 
 =================================
 =================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateMany({ home_state: "WA"}, {$inc: {number_of_belts: 1 }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ],
+    number_of_belts: 0
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ],
+    number_of_belts: 0
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ],
+    number_of_belts: 0
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ],
+    number_of_belts: 1
+  }
+]
 
 =================================
 =================================
 Add "updated_on" field, and set the value as the current date.
 =================================
 =================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateMany({}, {$currentDate: { update_on: true}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 4,
+  modifiedCount: 4,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ],
+    number_of_belts: 0,
+    update_on: ISODate("2023-07-14T04:23:44.121Z")
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ],
+    number_of_belts: 0,
+    update_on: ISODate("2023-07-14T04:23:44.121Z")
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ],
+    number_of_belts: 0,
+    update_on: ISODate("2023-07-14T04:23:44.121Z")
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ],
+    number_of_belts: 1,
+    update_on: ISODate("2023-07-14T04:23:44.121Z")
+  }
+]
 
 
 
