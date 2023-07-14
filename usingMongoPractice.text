@@ -1,0 +1,531 @@
+=================================
+=================================
+create a db called "my_first_db":
+=================================
+=================================
+
+Atlas atlas-9nmynq-shard-0 [primary] test> use my_first_db
+switched to db my_first_db
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> show dbs
+users     144.00 KiB
+users_db   72.00 KiB
+admin     336.00 KiB
+local      18.83 GiB
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db
+my_first_db
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> 
+
+=================================
+=================================
+create students collection:
+=================================
+=================================
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> show collections
+
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db.createCollection students
+Uncaught:
+SyntaxError: Missing semicolon. (1:19)
+
+> 1 | db.createCollection students
+    |                    ^
+  2 |
+
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db.createCollection("students")
+{ ok: 1 }
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> show collections
+students
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> 
+
+=================================
+=================================
+Each document you insert into students must contain:
+
+({name: STRING, home_state: STRING, lucky_number: NUMBER, birthday: {month: NUMBER, day: NUMBER, year: NUMBER}})
+=================================
+=================================
+<<TEMPLATE:>>
+db.students.insertOne({name: "Benny", home_state: "AZ", lucky_number: 17, birthday:{month: 12, day: 17, year: 1991}})
+
+db.students.insertOne({name: "Bruce Wayne", home_state: "NY", lucky_number: 7, birthday:{month: 4, day: 7, year: 1915}})
+
+db.students.insertOne({name: "Peter Parker", home_state: "NY", lucky_number: 10, birthday:{month: 8, day: 10, year: 1991}})
+
+db.students.insertOne({name: "Toph Beifong", home_state: "Earth Kingdom", lucky_number: 1, birthday:{month: 4, day: 22, year: 5000}})
+
+db.students.insertOne({name: "Heather Roper", home_state: "AZ", lucky_number: 26, birthday:{month: 7, day: 26, year: 1993}})
+
+db.students.insertOne({name: "Cali Fornia", home_state: "CA", lucky_number: 3, birthday:{month: 7, day: 7, year: 1997}})
+
+db.students.insertOne({name: "Se Attle", home_state: "WA", lucky_number: 46, birthday:{month: 4, day: 4, year: 1984}})
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db.students.insertOne({name: "Benny", home_state: "AZ", lucky_number: "17", birthday:{month: 12, day: 17, year: 1991}})
+{
+  acknowledged: true,
+  insertedId: ObjectId("64b0abc3ead404e7661858ec")
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0abc3ead404e7661858ec"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: '17',
+    birthday: { month: 12, day: 17, year: 1991 }
+  }
+]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0abc3ead404e7661858ec"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: '17',
+    birthday: { month: 12, day: 17, year: 1991 }
+  },
+  {
+    _id: ObjectId("64b0adb8ead404e7661858ed"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: '7',
+    birthday: { month: 4, day: 7, year: 1915 }
+  },
+  {
+    _id: ObjectId("64b0ae0aead404e7661858ee"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: '10',
+    birthday: { month: 8, day: 10, year: 1991 }
+  },
+  {
+    _id: ObjectId("64b0ae72ead404e7661858ef"),
+    name: 'Toph Beifong',
+    home_state: 'Earth Kingdom',
+    lucky_number: '1',
+    birthday: { month: 4, day: 22, year: 5000 }
+  },
+  {
+    _id: ObjectId("64b0aebbead404e7661858f0"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: '26',
+    birthday: { month: 7, day: 26, year: 1993 }
+  }
+]
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> 
+
+
+=================================
+=================================
+create students collection:
+*Added 2 students (1 in CA and 1 in WA)**
+=================================
+=================================
+
+Atlas atlas-9nmynq-shard-0 [primary] my_first_db> db.students.find({"home_state": {"$in": ["CA", "WA"]}})
+[
+  {
+    _id: ObjectId("64b0afa8ead404e7661858f1"),
+    name: 'Cali Fornia',
+    home_state: 'CA',
+    lucky_number: '3',
+    birthday: { month: 7, day: 7, year: 1997 }
+  },
+  {
+    _id: ObjectId("64b0aff1ead404e7661858f2"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: '46',
+    birthday: { month: 4, day: 4, year: 1984 }
+  }
+]
+
+=================================
+=================================
+get all students who's lucky number is greater than 3:
+
+**restarted new db called my_second_db (couldn't correct the fact that I made all the lucky_numbers strings instead of ints)
+=================================
+=================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find({lucky_number: {$gt: 3}})
+[
+  {
+    _id: ObjectId("64b0be8385bf35a4e5209377"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: 17,
+    birthday: { month: 12, day: 17, year: 1991 }
+  },
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 }
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 }
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 }
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 }
+  }
+]
+=================================
+=================================
+Add a field to each student collection called 'interests' that is an ARRAY. contain:'coding', 'brunch', 'MongoDB'. (in ONE operation)
+=================================
+=================================
+
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateMany({}, {$set: {interests: ["coding", "brunch", "MongoDB" ] } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 7,
+  modifiedCount: 7,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8385bf35a4e5209377"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: 17,
+    birthday: { month: 12, day: 17, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  },
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  },
+  {
+    _id: ObjectId("64b0be9485bf35a4e520937a"),
+    name: 'Toph Beifong',
+    home_state: 'Earth Kingdom',
+    lucky_number: 1,
+    birthday: { month: 4, day: 22, year: 5000 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  },
+  {
+    _id: ObjectId("64b0be9d85bf35a4e520937c"),
+    name: 'Cali Fornia',
+    home_state: 'CA',
+    lucky_number: 3,
+    birthday: { month: 7, day: 7, year: 1997 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB' ]
+  }
+]
+
+=================================
+=================================
+Adding unique interests to the students (some shared, some not)
+=================================
+=================================
+
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateMany( {name: {$in: ["Benny", "Heather Roper"] } }, {$push: {interests: "Magic the Gathering" }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateOne( {name: "Toph Beifong" }, { $push: { interests: "Earth Bending" }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateOne( {name: "Bruce Wayne" }, { $push: { interests: "Protecting Gotham"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateOne( {name: "Peter Parker" }, { $push: { interests: "Likes spiders"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateMany( {name: {$in: ["Cali Fornia", "Se Attle"] } }, {$push: {interests: "Like WFH Culture" }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8385bf35a4e5209377"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: 17,
+    birthday: { month: 12, day: 17, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ]
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ]
+  },
+  {
+    _id: ObjectId("64b0be9485bf35a4e520937a"),
+    name: 'Toph Beifong',
+    home_state: 'Earth Kingdom',
+    lucky_number: 1,
+    birthday: { month: 4, day: 22, year: 5000 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Earth Bending' ]
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0be9d85bf35a4e520937c"),
+    name: 'Cali Fornia',
+    home_state: 'CA',
+    lucky_number: 3,
+    birthday: { month: 7, day: 7, year: 1997 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ]
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ]
+  }
+]
+
+
+
+=================================
+=================================
+Adding "taxes" as an interests to a student
+=================================
+=================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateOne( {name: "Heather Roper" }, { $push: { interests: "taxes"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find(name: "Heather Roper"})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:21)
+
+> 1 | db.students.find(name: "Heather Roper"})
+    |                      ^
+  2 |
+
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find({ name: "Heather Roper"})
+[
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering', 'taxes' ]
+  }
+]
+
+
+=================================
+=================================
+Remover "taxes" as an interests from a student
+=================================
+=================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.updateOne({ name: "Heather Roper" }, {$pull: {interests: "taxes"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find({ name: "Heather Roper"})
+[
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  }
+]
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> 
+
+
+
+=================================
+=================================
+Delete students who's home_state is CA
+=================================
+=================================
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.deleteMany({ home_state: "CA"})
+{ acknowledged: true, deletedCount: 1 }
+Atlas atlas-9nmynq-shard-0 [primary] my_second_db> db.students.find()
+[
+  {
+    _id: ObjectId("64b0be8385bf35a4e5209377"),
+    name: 'Benny',
+    home_state: 'AZ',
+    lucky_number: 17,
+    birthday: { month: 12, day: 17, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0be8885bf35a4e5209378"),
+    name: 'Bruce Wayne',
+    home_state: 'NY',
+    lucky_number: 7,
+    birthday: { month: 4, day: 7, year: 1915 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Protecting Gotham' ]
+  },
+  {
+    _id: ObjectId("64b0be8d85bf35a4e5209379"),
+    name: 'Peter Parker',
+    home_state: 'NY',
+    lucky_number: 10,
+    birthday: { month: 8, day: 10, year: 1991 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Likes spiders' ]
+  },
+  {
+    _id: ObjectId("64b0be9485bf35a4e520937a"),
+    name: 'Toph Beifong',
+    home_state: 'Earth Kingdom',
+    lucky_number: 1,
+    birthday: { month: 4, day: 22, year: 5000 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Earth Bending' ]
+  },
+  {
+    _id: ObjectId("64b0be9985bf35a4e520937b"),
+    name: 'Heather Roper',
+    home_state: 'AZ',
+    lucky_number: 26,
+    birthday: { month: 7, day: 26, year: 1993 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Magic the Gathering' ]
+  },
+  {
+    _id: ObjectId("64b0bea085bf35a4e520937d"),
+    name: 'Se Attle',
+    home_state: 'WA',
+    lucky_number: 46,
+    birthday: { month: 4, day: 4, year: 1984 },
+    interests: [ 'coding', 'brunch', 'MongoDB', 'Like WFH Culture' ]
+  }
+]
+
+
+=================================
+=================================
+Remove a student by name
+=================================
+=================================
+
+
+=================================
+=================================
+Remove a student whos luck_number is greater than 5 (just one student)  
+=================================
+=================================
+
+
+=================================
+=================================
+add a field to each student collection called "number_of_belts" and set it to the number 0
+=================================
+=================================
+
+=================================
+=================================
+increment the field "number_of_belts" by 1 for all students who's "home_state" is "WA" 
+=================================
+=================================
+
+=================================
+=================================
+Add "updated_on" field, and set the value as the current date.
+=================================
+=================================
+
+
+
+
+
